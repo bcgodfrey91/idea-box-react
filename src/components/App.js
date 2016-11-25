@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Inputs from './Inputs'
+import IdeaList from './IdeaList'
+
 
 class App extends Component {
   constructor() {
@@ -6,6 +9,7 @@ class App extends Component {
     this.state = {
       title: '',
       body: '',
+      quality: 'Swill',
       ideas:[]
     }
   }
@@ -22,47 +26,52 @@ class App extends Component {
     const idea = {
       title: this.state.title,
       body: this.state.body,
-      quality: "Swill"
+      quality: this.state.quality
     }
     this.state.ideas.push(idea)
     this.setState({ title: '', body: '' })
   }
 
-  renderIdeas() {
-    return this.state.ideas.map((idea, index) => {
-        return (
-          <section className="idea" key={index}>
-            <p>{index}</p>
-            <p>{idea.title}</p>
-            <p>{idea.body}</p>
-            <p>{idea.quality}</p>
-          </section>
-      )
-    })
+  removeIdea(index) {
+    const ideasList = this.state.ideas;
+    ideasList.splice(ideasList.indexOf(index), 1);
+    this.setState({ ideas: ideasList})
   }
 
+  upvote() {
+    if(this.state.quality === 'Swill') {
+      this.setState({ quality: 'Good' })
+    } else {
+      this.setState({ quality: 'Great' })
+    }
+  }
+
+  downvote() {
+    if(this.state.quality === 'Great') {
+      this.setState({ quality: 'Good' })
+    } else {
+      this.setState({ quality: 'Swill' })
+    }
+  }
 
 
   render() {
     return (
       <div className="App">
-        <input
-        value={this.state.title}
-        className="idea-title"
-        onChange={(e) => this.updateTitle(e)}
-        />
-        <input
-        value={this.state.body}
-        className="idea-body"
-        onChange={(e) => this.updateBody(e)}
-        />
-        <button
-          onClick={() => this.addIdea()}
-        >
-        Submit
-        </button>
+        <Inputs
+          title={this.state.title}
+          body={this.state.body}
+          updateTitle={(e) => this.updateTitle(e)}
+          updateBody={(e) => this.updateBody(e)}
+          addIdea={() => this.addIdea()}
 
-        <h1>{ this.renderIdeas() }</h1>
+        />
+        <IdeaList
+          ideas={this.state.ideas}
+          removeIdea={(index) => this.removeIdea(index)}
+          upvote={() => this.upvote()}
+          downvote={() => this.downvote()}
+        />
       </div>
     );
   }
